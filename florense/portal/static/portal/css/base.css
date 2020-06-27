@@ -1,0 +1,28 @@
+body{
+    background-color: #f5f5f5;
+    font-family: "HelveticaLt";
+}
+
+.navbar-brand{
+    margin-right: 5%;
+}
+
+.pull-right{
+    float: right;
+}
+
+.logout{
+    margin-right: 10%;
+}
+
+.space-between {
+	justify-content: space-between;
+}
+
+.space-around {
+	justify-content: space-around;
+}
+
+.flex{
+    display: flex;
+}

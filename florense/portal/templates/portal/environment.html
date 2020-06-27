@@ -1,0 +1,24 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'portal/css/environment.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container environment text-center">
+    <div class="dropdown">
+        <button class="btn btn-lg btn-dark dropdown-toggle btn-environment" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+            CIDADE
+        </button>
+        <div class="dropdown-menu link-environment" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Brasília</a>
+            <a class="dropdown-item" href="#">Campinas</a>
+            <a class="dropdown-item" href="#">Ribeirão Preto</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

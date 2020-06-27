@@ -1,0 +1,104 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'portal/css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container space-around flex">
+    <h5 class="orders subtitle text-center">CAMPINAS | Pedidos</h5>
+    <button type="button" class="btn btn-secondary btn-sm btn-incluir">INCLUIR</button>
+</div>
+<div class="container table-responsive">
+<table id="orders" class="table table-striped  orders">
+    <thead>
+    <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Número</th>
+        <th scope="col">Cliente</th>
+        <th scope="col">Ambiente</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>26/06/2020</td>
+        <td>8472</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>5435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>8532</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>7807</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>5245</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6764</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6574</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    <tr>
+        <td>26/06/2020</td>
+        <td>6435</td>
+        <td>Leonardo Romanini</td>
+        <td>Cozinha</td>
+    </tr>
+    </tbody>
+</table>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'portal/js/orders.js' %}"></script>
+{% endblock %}
