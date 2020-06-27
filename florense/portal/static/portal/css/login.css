@@ -23,6 +23,11 @@ body {
   padding: 15px;
   margin: 0 auto;
 }
+
+.signin{
+    margin-top: 10%;
+}
+
 .form-signin .checkbox {
   font-weight: 400;
 }

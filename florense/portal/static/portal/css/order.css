@@ -1,0 +1,18 @@
+.btn-salvar{
+    height: fit-content;
+    align-self: center;
+}
+
+p{
+    margin-top: 1rem;
+}
+
+.row{
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.img{
+    height: 400px;
+    width: 460px;
+}
