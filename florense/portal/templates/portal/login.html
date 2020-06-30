@@ -7,19 +7,20 @@
 
 {% block content %}
 <div class="text-center signin">
-    <form class="form-signin">
+    <form method="post" action="{% url 'login' %}" class="form-signin">
+        {% csrf_token %}
         <img class="mb-4" src="{% static 'portal/images/logo.svg' %}" alt="" width="300"
              height="70">
-        <label for="inputUser" class="sr-only"></label>
-        <input type="text" id="inputUser" class="form-control" placeholder="Usuário" required="" autofocus="">
-        <label for="inputPassword" class="sr-only"></label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Senha" required="">
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" value="remember-me"> Lembrar
-            </label>
-        </div>
-        <button class="btn btn-lg btn-dark btn-block" type="submit">Entrar</button>
+        <label for="user" class="sr-only"></label>
+        <input type="text" id="user" name="username" class="form-control" placeholder="Usuário" required=""
+               autofocus="">
+        <label for="password" class="sr-only"></label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Senha" required="">
+        <input type="hidden" name="next" value="{{ next }}">
+        {% if form.errors %}
+        <p>Credenciais Inválidas</p>
+        {% endif %}
+        <button class="btn btn-lg btn-dark btn-block btn-entrar" type="submit">Entrar</button>
     </form>
 
 

@@ -47,8 +47,9 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            {% if not user.request.ambiente %}
+
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {% if request.session.environment %}
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                         <a class="nav-link" href="#">PEDIDOS</a>
@@ -70,12 +71,14 @@
                             <a class="dropdown-item" href="#">Ribeirão Preto</a>
                         </div>
                     </li>
+                    {% else %}
+                        <ul class="navbar-nav ml-auto logout">
+                    {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="" data-target="#myModal" data-toggle="modal">SAIR</a>
+                        <a class="nav-link" href="/logout">SAIR</a>
                     </li>
                 </ul>
             </div>
-            {% endif %}
         </nav>
         {% endif %}
     </div>
@@ -104,6 +107,8 @@
 
 <!-- DataTable JS -->
 <script src="{% static 'portal/js/external/jquery.dataTables.min.js' %}"></script>
+
+<script src="{% static 'portal/js/base.js' %}"></script>
 
 {% block script %}
 {% endblock %}

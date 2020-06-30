@@ -10,9 +10,12 @@
     <h5 class="orders subtitle text-center">AMBIENTE | Entrar</h5>
 </div>
 <div class="container space-between flex environment">
-    <a class="link" href="#">Brasília</a>
-    <a class="link" href="#">Campinas</a>
-    <a class="link" href="#">Ribeirão Preto</a>
+    <a class="link" href="#" onclick="setEnvironment('brasília')">Brasília</a>
+    <a class="link" href="#" onclick="setEnvironment('campinas')">Campinas</a>
+    <a class="link" href="#" onclick="setEnvironment('ribeirão preto')">Ribeirão Preto</a>
 </div>
+{% endblock %}
 
+{% block script %}
+<script src="{% static 'portal/js/environment.js' %}"></script>
 {% endblock %}
