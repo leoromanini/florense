@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.db import connection
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -126,3 +127,10 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/login'
 LOGOUT_REDIRECT_URL = LOGIN_URL
 LOGIN_REDIRECT_URL = "environment"
+
+# Loads all the environments avaliable on the database
+APP_ENVIRONMENTS = []
+cursor = connection.cursor()
+cursor.execute('''SELECT name FROM tbl_environment''')
+for environment in cursor.fetchall():
+    APP_ENVIRONMENTS.append(environment[0])

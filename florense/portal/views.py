@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 import json
 from .models import *
-
+from .decorators import environment_required
 
 
 @login_required
@@ -18,6 +18,7 @@ def environment(request):
     return render(request, 'portal/environment.html')
 
 
+@environment_required
 @login_required
 def orders_list(request):
     return render(request, 'portal/orders_list.html')

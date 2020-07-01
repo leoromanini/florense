@@ -4,6 +4,16 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class Environment(models.Model):
+    class Meta:
+        db_table = "tbl_environment"
+
+    name = models.CharField(max_length=150)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Order(models.Model):
     class Meta:
         db_table = "tbl_order"
@@ -11,8 +21,11 @@ class Order(models.Model):
     id = models.AutoField(primary_key=True)
     customer = models.CharField(max_length=250)
     description = models.TextField(blank=True)
-    salesmen = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_salesmen')
-    inspector = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_inspector')
+    salesmen = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL,
+                                 related_name='order_salesmen', null=True)
+    inspector = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL,
+                                  related_name='order_inspector', null=True)
+    environment = models.ForeignKey(Environment, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
 
@@ -21,6 +34,9 @@ class Order(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Order, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.id
 
 
 class Product(models.Model):
@@ -39,6 +55,9 @@ class Product(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Product, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Allocation(models.Model):
@@ -59,4 +78,7 @@ class Allocation(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Allocation, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.id
 
