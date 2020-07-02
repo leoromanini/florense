@@ -64,3 +64,7 @@ body{
 .table-center{
     text-align: center;
 }
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
