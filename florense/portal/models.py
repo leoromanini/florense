@@ -39,13 +39,22 @@ class Order(models.Model):
         return self.id
 
 
+class Room(models.Model):
+    class Meta:
+        db_table = "tbl_room"
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+
 class Product(models.Model):
     class Meta:
         db_table = "tbl_product"
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
-    allocations = models.ManyToManyField(Order, through='Allocation')
+    allocations = models.ManyToManyField(Room, through='Allocation')
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
@@ -60,13 +69,23 @@ class Product(models.Model):
         return self.name
 
 
+class ProductBelongs(models.Model):
+    class Meta:
+        db_table = "tbl_product_belongs"
+
+    id = models.AutoField(primary_key=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+
 class Allocation(models.Model):
     class Meta:
         db_table = "tbl_allocation"
 
     id = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_belong = models.ForeignKey(ProductBelongs, on_delete=models.CASCADE)
 
     path_image = models.TextField(blank=True)
 
@@ -81,4 +100,6 @@ class Allocation(models.Model):
 
     def __unicode__(self):
         return self.id
+
+
 

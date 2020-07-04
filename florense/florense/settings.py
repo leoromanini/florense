@@ -129,8 +129,8 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 LOGIN_REDIRECT_URL = "environment"
 
 # Loads all the environments avaliable on the database
-APP_ENVIRONMENTS = []
-cursor = connection.cursor()
-cursor.execute('''SELECT name FROM tbl_environment''')
-for environment in cursor.fetchall():
-    APP_ENVIRONMENTS.append(environment[0])
+#APP_ENVIRONMENTS = []
+#cursor = connection.cursor()
+#cursor.execute('''SELECT name FROM tbl_environment''')
+#for environment in cursor.fetchall():
+#    APP_ENVIRONMENTS.append(environment[0])
