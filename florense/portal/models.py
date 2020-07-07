@@ -1,7 +1,6 @@
 from django.conf.global_settings import AUTH_USER_MODEL
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 
 
 class Environment(models.Model):
@@ -9,6 +8,7 @@ class Environment(models.Model):
         db_table = "tbl_environment"
 
     name = models.CharField(max_length=150)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
@@ -26,6 +26,8 @@ class Order(models.Model):
     inspector = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL,
                                   related_name='order_inspector', null=True)
     environment = models.ForeignKey(Environment, on_delete=models.SET_NULL, null=True)
+    active = models.BooleanField(default=True)
+
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
 
@@ -39,13 +41,25 @@ class Order(models.Model):
         return self.id
 
 
-class Room(models.Model):
+class Label(models.Model):
     class Meta:
-        db_table = "tbl_room"
+        db_table = "tbl_label"
 
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    name = models.CharField(max_length=150)
+    active = models.BooleanField(default=True)
+
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Label, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Product(models.Model):
@@ -54,7 +68,8 @@ class Product(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
-    allocations = models.ManyToManyField(Room, through='Allocation')
+
+    active = models.BooleanField(default=True)
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
@@ -69,6 +84,30 @@ class Product(models.Model):
         return self.name
 
 
+class Room(models.Model):
+    class Meta:
+        db_table = "tbl_room"
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    allocations = models.ManyToManyField(Product, through='Allocation')
+    labels = models.ManyToManyField(Label, through='RoomLabel')
+    active = models.BooleanField(default=True)
+
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Room, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
+
+
 class ProductBelongs(models.Model):
     class Meta:
         db_table = "tbl_product_belongs"
@@ -76,6 +115,41 @@ class ProductBelongs(models.Model):
     id = models.AutoField(primary_key=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(ProductBelongs, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.id
+
+
+class LabelBelongs(models.Model):
+    class Meta:
+        db_table = "tbl_label_belongs"
+
+    id = models.AutoField(primary_key=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    label = models.ForeignKey(Label, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(LabelBelongs, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.id
 
 
 class Allocation(models.Model):
@@ -86,6 +160,7 @@ class Allocation(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_belong = models.ForeignKey(ProductBelongs, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     path_image = models.TextField(blank=True)
 
@@ -102,4 +177,26 @@ class Allocation(models.Model):
         return self.id
 
 
+class RoomLabel(models.Model):
+    class Meta:
+        db_table = "tbl_room_label"
 
+    id = models.AutoField(primary_key=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    label = models.ForeignKey(Label, on_delete=models.CASCADE)
+    label_belong = models.ForeignKey(LabelBelongs, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+    content = models.TextField(blank=True)
+
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(RoomLabel, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.id

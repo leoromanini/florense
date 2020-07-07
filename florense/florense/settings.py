@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+
+import django
 from django.db import connection
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -129,8 +131,11 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 LOGIN_REDIRECT_URL = "environment"
 
 # Loads all the environments avaliable on the database
-#APP_ENVIRONMENTS = []
-#cursor = connection.cursor()
-#cursor.execute('''SELECT name FROM tbl_environment''')
-#for environment in cursor.fetchall():
-#    APP_ENVIRONMENTS.append(environment[0])
+APP_ENVIRONMENTS = []
+cursor = connection.cursor()
+try:
+    cursor.execute('''SELECT name FROM tbl_environment''')
+    for environment in cursor.fetchall():
+        APP_ENVIRONMENTS.append(environment[0])
+except django.db.utils.ProgrammingError:
+    print("WARNING: tbl_environment is missing!")

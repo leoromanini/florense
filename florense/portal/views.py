@@ -24,8 +24,12 @@ def orders_list(request):
     return render(request, 'portal/orders_list.html')
 
 
+@environment_required
+@login_required
 def order(request):
-    return render(request, 'portal/order.html')
+    rooms = Room.objects.all()
+
+    return render(request, 'portal/order.html', {'rooms': rooms})
 
 
 def order_existent(request):
