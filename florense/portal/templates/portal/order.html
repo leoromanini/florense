@@ -32,7 +32,7 @@
             <div class="dropdown-menu">
 
                 {% for room in rooms %}
-                <a class="dropdown-item" href="#">{{room.name | upper}}</a>
+                <a class="dropdown-item" onclick="addRoom('{{room.name}}')">{{room.name | upper}}</a>
                 {% endfor %}
 
             </div>
@@ -57,7 +57,8 @@
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <h5 class="orders subtitle text-center">VARANDA GOURMET</h5>
-                <div class="flex space-between flex-wrap">
+
+                <div id="COZINHA-labels" class="flex space-between flex-wrap">
                     <div>
                         <label>Revestimento</label>
                         <input type="text" class="form-control">
@@ -137,8 +138,6 @@
                             <label class="custom-file-label" for="customFile">Escolher arquivo</label>
                         </div>
                     </div>
-                </section>
-                <section class="container flex row space-between">
                     <div class="item">
                         <p>Geladeira</p>
                         <div class="custom-file">
