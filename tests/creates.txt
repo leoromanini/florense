@@ -1,0 +1,45 @@
+from portal.models import *
+
+from django.contrib.auth.models import User
+
+salesmen = User.objects.get(pk=1)
+inspector = User.objects.get(pk=2)
+environment = Environment.objects.get(pk=1)
+
+o = Order()
+o.custumer = "Ricardo de Almeida"
+o.description = "Casa da praia no RJ"
+o.salesmen = salesmen
+o.inspector = inspector
+o.environment = environment
+o.save()
+o.customer = "Ricardo de Almeida"
+o.save()
+
+r = Room()
+r.order = o
+r.save()
+r.name = "cozinha"
+r.save()
+
+p = Product()
+p.name = "Fogão"
+p.save()
+
+p1 = Product()
+p1.name = "Coifa"
+p1.save()
+
+pb = ProductBelongs()
+pd.room = r
+pb.room = r
+pb.product = p
+pb.save()
+
+a = Allocation()
+a.room = r
+a.product = p
+a.product_belong = pb
+a.path_image = r"C:\Users\leohr\Documents\Projetos\florense\docs\data.pdf"
+a.save()
+

@@ -1,11 +1,14 @@
 {% extends 'portal/base.html' %}
 {% load static %}
+{% load extra_tags %}
 
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{% static 'portal/css/order.css' %}">
 {% endblock %}
 
 {% block content %}
+
+
 <div class="container space-around flex">
     <h5 class="orders subtitle text-center">PEDIDO | Novo</h5>
     <button type="button" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
@@ -32,7 +35,11 @@
             <div class="dropdown-menu">
 
                 {% for room in rooms %}
-                <a class="dropdown-item" onclick="addRoom('{{room.name}}')">{{room.name | upper}}</a>
+
+                <a class="dropdown-item" href="#" onclick="addRoom('{{room.name|upper}}',
+                        {{room.labels.all|get_value_in_qs:'name'}},
+                        {{room.products.all|get_value_in_qs:'name'}})">{{room.name | upper}}</a>
+
                 {% endfor %}
 
             </div>
