@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 import json
 from .models import *
 from .decorators import environment_required
+from django.contrib.auth.models import User
 
 
 @login_required
@@ -27,9 +28,56 @@ def orders_list(request):
 @environment_required
 @login_required
 def order(request):
-    rooms = Room.objects.all()
+    if request.method == 'GET':
+        rooms = Room.objects.all()
+        salesmen = User.objects.filter(groups__name='vendedores')
+        inspector = User.objects.filter(groups__name='conferentes')
+        return render(request, 'portal/order.html', {'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
+    if request.method == 'POST':
 
-    return render(request, 'portal/order.html', {'rooms': rooms})
+        customer = request.POST['customer']
+        description = request.POST['description']
+        labels = {}
+        products = {}
+        rooms = {'labels': labels, 'products': products}
+        salesmen = User.objects.get(pk=request.POST['salesmen'])
+        inspector = User.objects.get(pk=request.POST['inspector'])
+        environment = Environment.objects.get(name=request.session.get('environment'))
+
+        order = Order(customer=customer, description=description,
+                      salesmen=salesmen, inspector=inspector,
+                      environment=environment)
+
+        order.save()
+
+        for key, value in request.POST.items():
+            if 'room' in key:
+                room = Room.objects.get(name=value)
+                allocation = AllocationRoom(order=order, room=room)
+                allocation.save()
+
+        for key, value in request.POST.items():
+            if 'label' in key or 'product' in key:
+                key_splited = key.split('-')
+                room = Room.objects.get(name=key_splited[-2])
+                allocation_room = AllocationRoom.objects.get(room=room, order=order)
+
+            if 'label' in key:
+                label = Label.objects.get(name=key_splited[-1])
+                permission = LabelPermission.objects.get(room=room, label=label)
+                if permission:
+                    allocation_label = AllocationLabel(label_permission=permission,
+                                                       allocation_room=allocation_room,
+                                                       content=value)
+                    allocation_label.save()
+            elif 'product' in key:
+                product = Product.objects.get(name=key_splited[-1])
+                permission = ProductPermission.objects.get(room=room, product=product)
+                if permission:
+                    #TODO: Handle the file
+                    pass
+
+        return redirect('orders_list')
 
 
 def order_existent(request):

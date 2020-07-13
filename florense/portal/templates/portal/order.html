@@ -8,271 +8,94 @@
 
 {% block content %}
 
-
 <div class="container space-around flex">
     <h5 class="orders subtitle text-center">PEDIDO | Novo</h5>
-    <button type="button" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
+    <button form="order" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
 </div>
 <div class="container">
-    <form>
+    <form id="order" action="/pedido" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="form-group">
-            <label for="cliente">Cliente</label>
-            <input type="text" class="form-control" id="cliente">
+            <label for="customer">Cliente</label>
+            <input type="text" class="form-control" id="customer" name="customer">
         </div>
         <div class="form-group">
             <label for="ambiente">Obervações Gerais</label>
-            <textarea class="form-control" id="ambiente" rows="3"></textarea>
+            <textarea form="order" class="form-control" id="ambiente" rows="3" name="description"></textarea>
         </div>
-    </form>
+        <div class="form-group flex space-between">
+            <div>
+                <label for="salesmen">Vendedor</label>
 
-    <div class="container space-around flex">
-        <div class="btn-group dropright">
-            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false">
-                Adicionar
-            </button>
-            <div class="dropdown-menu">
+                <select class="form-control" id="salesmen" name="salesmen">
+                    {% for item in salesmen %}
+                        <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    {% endfor %}
+                </select>
 
-                {% for room in rooms %}
+            </div>
+            <div>
+                <label for="inspector">Conferente</label>
+                <select class="form-control" id="inspector" name="inspector">
+                    {% for item in inspector %}
+                        <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
 
-                <a class="dropdown-item" href="#" onclick="addRoom('{{room.name|upper}}',
+        <div class="container space-around flex">
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    Adicionar
+                </button>
+                <div class="dropdown-menu">
+
+                    {% for room in rooms %}
+
+                    <a class="dropdown-item" href="#" onclick="addRoom('{{room.name|upper}}',
                         {{room.labels.all|get_value_in_qs:'name'}},
                         {{room.products.all|get_value_in_qs:'name'}})">{{room.name | upper}}</a>
 
-                {% endfor %}
+                    {% endfor %}
 
-            </div>
-        </div>
-
-        <div class="btn-group dropright">
-            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false">
-                Consultar
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="carouselRoom" class="carousel slide" data-interval="false">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <h5 class="orders subtitle text-center">VARANDA GOURMET</h5>
-
-                <div id="COZINHA-labels" class="flex space-between flex-wrap">
-                    <div>
-                        <label>Revestimento</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Espessura</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Revestimento</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Espessura</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
                 </div>
-                <section class="container flex row space-between">
-                    <div class="item">
-                        <p>Fogão
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-check"
-                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5v-1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h5v2.5A1.5 1.5 0 0 0 10.5 6H13v2h1V6L9 1z"/>
-                                <path fill-rule="evenodd"
-                                      d="M15.854 10.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708l1.146 1.147 2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                            </svg>
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                <path fill-rule="evenodd"
-                                      d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
-                                <path fill-rule="evenodd"
-                                      d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
-                            </svg>
-                        </p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Coifa</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Microondas</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Geladeira</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Forno</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Batedeira</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                </section>
             </div>
-            <div class="carousel-item">
-                <h5 class="orders subtitle text-center">COZINHA</h5>
-                <div class="flex space-between flex-wrap">
-                    <div>
-                        <label>Revestimento</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Espessura</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Revestimento</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Espessura</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Misturador</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div>
-                        <label>Cubas</label>
-                        <input type="text" class="form-control">
-                    </div>
+
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    Consultar
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
                 </div>
-                <section class="container flex row space-between">
-                    <div class="item">
-                        <p>Fogão</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Coifa</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Microondas</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                </section>
-                <section class="container flex row space-between">
-                    <div class="item">
-                        <p>Geladeira</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Forno</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <p>Batedeira</p>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
-                        </div>
-                    </div>
-                </section>
             </div>
+
         </div>
-        <a class="carousel-control-prev" href="#carouselRoom" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselRoom" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-        <ol class="carousel-indicators">
-            <li data-target="#carouselRoom" data-slide-to="0" class="active"></li>
-            <li data-target="#carouselRoom" data-slide-to="1"></li>
-        </ol>
-    </div>
+
+        <div id="carouselRoom" class="carousel slide" data-interval="false">
+            <div class="carousel-inner">
+
+            </div>
+            <a class="carousel-control-prev" href="#carouselRoom" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselRoom" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            <ol class="carousel-indicators">
+
+            </ol>
+        </div>
+    </form>
 </div>
 
 

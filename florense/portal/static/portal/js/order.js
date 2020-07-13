@@ -1,8 +1,11 @@
 //Enable the name on browse file
-$('.custom-file-input').on('change',function(){
-                var fileName = $(this).val();
-                $(this).next('.custom-file-label').html(fileName);
-})
+function enableNamePathOnInput(){
+    $('.custom-file-input').on('change',function(){
+                    var fileName = $(this).val();
+                    $(this).next('.custom-file-label').html(fileName);
+    })
+}
+
 
 //$('.carousel').carousel('pause');
 
@@ -15,23 +18,25 @@ function addRoom(room, labelsList, productsList){
 
     $(`<div class="carousel-item active">
             <h5 class="orders subtitle text-center">${room}</h5>
-            <div id="${room}-label" class="flex space-between flex-wrap">
+            <input type="hidden" name="room" value="${room}">
+            <div id="${room}-label" class="flex flex-start flex-wrap">
             ${labels}
             </div>
-            <section id="${room}-product" class="container flex row space-between">
+            <section id="${room}-product" class="container flex row flex-start">
             ${products}
             </section>
         </div>`).appendTo('.carousel-inner');
 
     $('<li data-target="#carouselRoom" class="active" data-slide-to="'+$(".carousel-indicators").children().length+'"></li>').appendTo('.carousel-indicators')
     $('.item').first().addClass('active');
+    enableNamePathOnInput();
 }
 
 function getHtmlLabels(room, labels){
     var labelsHtml = '';
 
     for(var item in labels) {
-        labelsHtml += `<div>
+        labelsHtml += `<div class="label-item">
                         <label>${labels[item]}</label>
                         <input name="label-${room}-${labels[item]}" type="text" class="form-control">
                       </div>`
@@ -43,7 +48,7 @@ function getHtmlProducts(room, products){
     var productsHtml = '';
 
     for(var item in products) {
-        productsHtml += `<div class="item">
+        productsHtml += `<div class="item product-item">
                         <p>${products[item]}
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-check"
                                  fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -62,8 +67,8 @@ function getHtmlProducts(room, products){
                             </svg>
                         </p>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label name="product-${room}-${products[item]}" class="custom-file-label" for="customFile">Escolher arquivo</label>
+                            <input name="product-${room}-${products[item]}" type="file" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">Escolher arquivo</label>
                         </div>
                     </div>`
     }
