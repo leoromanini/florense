@@ -176,6 +176,13 @@ class AllocationRoom(models.Model):
         return str('{} <- {}'.format(self.order.id, self.room.name))
 
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'order_files/{}/{}'.format(instance.allocation_room.order.id,
+                                      instance.allocation_room.room.name,
+                                      filename)
+
+
 class AllocationProduct(models.Model):
     class Meta:
         db_table = "tbl_allocation_product"
@@ -185,7 +192,7 @@ class AllocationProduct(models.Model):
     allocation_room = models.ForeignKey(AllocationRoom, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
 
-    path_image = models.TextField(blank=True)
+    image = models.ImageField(blank=True, upload_to=user_directory_path)
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()

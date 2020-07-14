@@ -5,6 +5,7 @@ import json
 from .models import *
 from .decorators import environment_required
 from django.contrib.auth.models import User
+from .handle_file import handle_uploaded_file
 
 
 @login_required
@@ -34,7 +35,6 @@ def order(request):
         inspector = User.objects.filter(groups__name='conferentes')
         return render(request, 'portal/order.html', {'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
     if request.method == 'POST':
-
         customer = request.POST['customer']
         description = request.POST['description']
         labels = {}
@@ -57,12 +57,10 @@ def order(request):
                 allocation.save()
 
         for key, value in request.POST.items():
-            if 'label' in key or 'product' in key:
+            if 'label' in key:
                 key_splited = key.split('-')
                 room = Room.objects.get(name=key_splited[-2])
                 allocation_room = AllocationRoom.objects.get(room=room, order=order)
-
-            if 'label' in key:
                 label = Label.objects.get(name=key_splited[-1])
                 permission = LabelPermission.objects.get(room=room, label=label)
                 if permission:
@@ -70,12 +68,21 @@ def order(request):
                                                        allocation_room=allocation_room,
                                                        content=value)
                     allocation_label.save()
-            elif 'product' in key:
+
+        for key, value in request.FILES.items():
+            if 'product' in key:
+                key_splited = key.split('-')
+                room = Room.objects.get(name=key_splited[-2])
+                allocation_room = AllocationRoom.objects.get(room=room, order=order)
                 product = Product.objects.get(name=key_splited[-1])
                 permission = ProductPermission.objects.get(room=room, product=product)
                 if permission:
-                    #TODO: Handle the file
-                    pass
+
+                    allocation_product = AllocationProduct(product_permission=permission,
+                                                           allocation_room=allocation_room,
+                                                           image=value)
+
+                    allocation_product.save()
 
         return redirect('orders_list')
 
