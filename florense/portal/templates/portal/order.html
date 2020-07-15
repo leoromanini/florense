@@ -15,9 +15,15 @@
 <div class="container">
     <form id="order" action="/pedido" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="customer">Cliente</label>
-            <input type="text" class="form-control" id="customer" name="customer">
+        <div class="flex">
+            <div class="form-group row-form">
+                <label for="customer">Cliente</label>
+                <input type="text" class="form-control" id="customer" name="customer">
+            </div>
+            <div class="form-group row-form">
+                <label for="number">Número</label>
+                <input type="text" class="form-control" id="number" name="number">
+            </div>
         </div>
         <div class="form-group">
             <label for="ambiente">Obervações Gerais</label>
@@ -26,10 +32,9 @@
         <div class="form-group flex space-between">
             <div>
                 <label for="salesmen">Vendedor</label>
-
                 <select class="form-control" id="salesmen" name="salesmen">
                     {% for item in salesmen %}
-                        <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
                     {% endfor %}
                 </select>
 
@@ -38,7 +43,7 @@
                 <label for="inspector">Conferente</label>
                 <select class="form-control" id="inspector" name="inspector">
                     {% for item in inspector %}
-                        <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
                     {% endfor %}
                 </select>
             </div>

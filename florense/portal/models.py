@@ -1,4 +1,5 @@
 from django.conf.global_settings import AUTH_USER_MODEL
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -12,6 +13,14 @@ class Environment(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    environment = models.ForeignKey(Environment, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} <- {}'.format(self.user, self.environment.name)
 
 
 class Label(models.Model):
@@ -85,6 +94,7 @@ class Order(models.Model):
         db_table = "tbl_order"
 
     id = models.AutoField(primary_key=True)
+    number = models.CharField(max_length=100)
     customer = models.CharField(max_length=250)
     description = models.TextField(blank=True)
     salesmen = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL,
@@ -176,11 +186,11 @@ class AllocationRoom(models.Model):
         return str('{} <- {}'.format(self.order.id, self.room.name))
 
 
-def user_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'order_files/{}/{}'.format(instance.allocation_room.order.id,
+def get_product_images_path(instance, filename):
+    return 'product_images/{}/{}/{}.{}'.format(instance.allocation_room.order.id,
                                       instance.allocation_room.room.name,
-                                      filename)
+                                      instance.product_permission.product.name,
+                                    filename.split('.')[-1])
 
 
 class AllocationProduct(models.Model):
@@ -192,7 +202,7 @@ class AllocationProduct(models.Model):
     allocation_room = models.ForeignKey(AllocationRoom, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
 
-    image = models.ImageField(blank=True, upload_to=user_directory_path)
+    image = models.ImageField(blank=True, upload_to=get_product_images_path)
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()

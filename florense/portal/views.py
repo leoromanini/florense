@@ -5,7 +5,6 @@ import json
 from .models import *
 from .decorators import environment_required
 from django.contrib.auth.models import User
-from .handle_file import handle_uploaded_file
 
 
 @login_required
@@ -23,7 +22,8 @@ def environment(request):
 @environment_required
 @login_required
 def orders_list(request):
-    return render(request, 'portal/orders_list.html')
+    orders = Order.objects.all()
+    return render(request, 'portal/orders_list.html', {'orders': orders})
 
 
 @environment_required
@@ -37,16 +37,15 @@ def order(request):
     if request.method == 'POST':
         customer = request.POST['customer']
         description = request.POST['description']
-        labels = {}
-        products = {}
-        rooms = {'labels': labels, 'products': products}
+        number = request.POST['number']
+
         salesmen = User.objects.get(pk=request.POST['salesmen'])
         inspector = User.objects.get(pk=request.POST['inspector'])
         environment = Environment.objects.get(name=request.session.get('environment'))
 
         order = Order(customer=customer, description=description,
                       salesmen=salesmen, inspector=inspector,
-                      environment=environment)
+                      environment=environment, number=number)
 
         order.save()
 
