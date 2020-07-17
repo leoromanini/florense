@@ -51,16 +51,16 @@ def order(request):
 
         for key, value in request.POST.items():
             if 'room' in key:
-                room = Room.objects.get(name=value)
+                room = Room.objects.get(pk=value)
                 allocation = AllocationRoom(order=order, room=room)
                 allocation.save()
 
         for key, value in request.POST.items():
             if 'label' in key:
                 key_splited = key.split('-')
-                room = Room.objects.get(name=key_splited[-2])
+                room = Room.objects.get(pk=key_splited[-2])
                 allocation_room = AllocationRoom.objects.get(room=room, order=order)
-                label = Label.objects.get(name=key_splited[-1])
+                label = Label.objects.get(pk=key_splited[-1])
                 permission = LabelPermission.objects.get(room=room, label=label)
                 if permission:
                     allocation_label = AllocationLabel(label_permission=permission,
@@ -71,9 +71,9 @@ def order(request):
         for key, value in request.FILES.items():
             if 'product' in key:
                 key_splited = key.split('-')
-                room = Room.objects.get(name=key_splited[-2])
+                room = Room.objects.get(pk=key_splited[-2])
                 allocation_room = AllocationRoom.objects.get(room=room, order=order)
-                product = Product.objects.get(name=key_splited[-1])
+                product = Product.objects.get(pk=key_splited[-1])
                 permission = ProductPermission.objects.get(room=room, product=product)
                 if permission:
 

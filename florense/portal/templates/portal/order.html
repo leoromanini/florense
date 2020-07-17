@@ -48,7 +48,6 @@
                 </select>
             </div>
         </div>
-
         <div class="container space-around flex">
             <div class="btn-group dropright">
                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
@@ -61,8 +60,11 @@
                     {% for room in rooms %}
 
                     <a class="dropdown-item" href="#" onclick="addRoom('{{room.name|upper}}',
+                        {{room.id}},
                         {{room.labels.all|get_value_in_qs:'name'}},
-                        {{room.products.all|get_value_in_qs:'name'}})">{{room.name | upper}}</a>
+                        {{room.labels.all|get_value_in_qs:'id'}},
+                        {{room.products.all|get_value_in_qs:'name'}},
+                        {{room.products.all|get_value_in_qs:'id'}})">{{room.name | upper}}</a>
 
                     {% endfor %}
 
@@ -75,7 +77,7 @@
                         aria-expanded="false">
                     Consultar
                 </button>
-                <div class="dropdown-menu">
+                <div id="consultButton" class="dropdown-menu">
                     <a class="dropdown-item" href="#">Action</a>
                     <a class="dropdown-item" href="#">Another action</a>
                     <a class="dropdown-item" href="#">Something else here</a>

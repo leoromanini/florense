@@ -6,50 +6,60 @@ function enableNamePathOnInput(){
     })
 }
 
-
-//$('.carousel').carousel('pause');
-
-function addRoom(room, labelsList, productsList){
+function addRoom(roomName, roomId, labelsListName, labelListId, productsListName, productListId){
     $(".carousel-item").removeClass('active');
     $(".carousel-indicators").children().removeClass('active');
 
-    var labels = getHtmlLabels(room, labelsList);
-    var products = getHtmlProducts(room, productsList);
+    var labels = getHtmlLabels(roomId, labelsListName, labelListId);
+    var products = getHtmlProducts(roomId, productsListName, productListId);
 
-    $(`<div class="carousel-item active">
-            <h5 class="orders subtitle text-center">${room}</h5>
-            <input type="hidden" name="room" value="${room}">
-            <div id="${room}-label" class="flex flex-start flex-wrap">
+    $(`<div class="carousel-item active ${roomId}-item">
+            <h5 class="orders subtitle text-center">${roomName}</h5>
+            <input type="hidden" name="room" value="${roomId}">
+            <div id="${roomId}-label" class="flex flex-start flex-wrap">
             ${labels}
             </div>
-            <section id="${room}-product" class="container flex row flex-start">
+            <section id="${roomId}-product" class="container flex row flex-start">
             ${products}
             </section>
         </div>`).appendTo('.carousel-inner');
 
-    $('<li data-target="#carouselRoom" class="active" data-slide-to="'+$(".carousel-indicators").children().length+'"></li>').appendTo('.carousel-indicators')
+    $('<li data-target="#carouselRoom" class="active ${roomId}-indicator carousel-indicator" data-slide-to="'+$(".carousel-indicators").children().length+'"></li>').appendTo('.carousel-indicators')
     $('.item').first().addClass('active');
     enableNamePathOnInput();
+
+    addElementOnConsultButton(roomName, roomId);
 }
 
-function getHtmlLabels(room, labels){
+function addElementOnConsultButton(roomName, roomId){
+    $(`<a class="dropdown-item" onclick="goToItemOnCarousel('${roomId}')">${roomName}</a>`).appendTo('#consultButton');
+}
+
+function goToItemOnCarousel(roomId){
+    $(".carousel-item").removeClass('active');
+    $(".carousel-indicator").removeClass('active');
+    $(`.${roomId}-item`).addClass('active');
+    $(`.${roomId}-indicator`).addClass('active');
+}
+
+function getHtmlLabels(roomId, labelsName, labelsId){
     var labelsHtml = '';
 
-    for(var item in labels) {
+    for(var item in labelsName) {
         labelsHtml += `<div class="label-item">
-                        <label>${labels[item]}</label>
-                        <input name="label-${room}-${labels[item]}" type="text" class="form-control">
+                        <label>${labelsName[item]}</label>
+                        <input name="label-${roomId}-${labelsId[item]}" type="text" class="form-control">
                       </div>`
     }
     return labelsHtml;
 }
 
-function getHtmlProducts(room, products){
+function getHtmlProducts(roomId, productsName, productsId){
     var productsHtml = '';
 
-    for(var item in products) {
+    for(var item in productsName) {
         productsHtml += `<div class="item product-item">
-                        <p>${products[item]}
+                        <p>${productsName[item]}
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-check"
                                  fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9 1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5v-1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h5v2.5A1.5 1.5 0 0 0 10.5 6H13v2h1V6L9 1z"/>
@@ -67,7 +77,7 @@ function getHtmlProducts(room, products){
                             </svg>
                         </p>
                         <div class="custom-file">
-                            <input name="product-${room}-${products[item]}" type="file" class="custom-file-input" id="customFile">
+                            <input name="product-${roomId}-${productsId[item]}" type="file" class="custom-file-input" id="customFile">
                             <label class="custom-file-label" for="customFile">Escolher arquivo</label>
                         </div>
                     </div>`
