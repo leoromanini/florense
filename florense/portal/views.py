@@ -28,12 +28,23 @@ def orders_list(request):
 
 @environment_required
 @login_required
-def order(request):
+def order(request, **kwargs):
     if request.method == 'GET':
+        id_order = kwargs.get('pk')
+        if id_order:
+            order = Order.objects.get(pk=id_order)
+        else:
+            order = None
         rooms = Room.objects.all()
         salesmen = User.objects.filter(groups__name='vendedores')
         inspector = User.objects.filter(groups__name='conferentes')
-        return render(request, 'portal/order.html', {'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
+        if order:
+            allocation_rooms = AllocationRoom.objects.filter(order=order)
+            return render(request, 'portal/order.html', {'order': order, 'allocation_rooms': allocation_rooms,
+                                                           'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
+        else:
+            return render(request, 'portal/order.html', {'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
+
     if request.method == 'POST':
         customer = request.POST['customer']
         description = request.POST['description']
@@ -49,11 +60,10 @@ def order(request):
 
         order.save()
 
-        for key, value in request.POST.items():
-            if 'room' in key:
-                room = Room.objects.get(pk=value)
-                allocation = AllocationRoom(order=order, room=room)
-                allocation.save()
+        for value in request.POST.getlist('room'):
+            room = Room.objects.get(pk=value)
+            allocation = AllocationRoom(order=order, room=room)
+            allocation.save()
 
         for key, value in request.POST.items():
             if 'label' in key:

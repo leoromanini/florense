@@ -6,11 +6,13 @@ function enableNamePathOnInput(){
     })
 }
 
-function addRoom(roomName, roomId, labelsListName, labelListId, productsListName, productListId){
+function addRoom(roomName, roomId, labelsListName, labelListId,
+                    productsListName, productListId, labelsContentList=undefined){
+
     $(".carousel-item").removeClass('active');
     $(".carousel-indicators").children().removeClass('active');
 
-    var labels = getHtmlLabels(roomId, labelsListName, labelListId);
+    var labels = getHtmlLabels(roomId, labelsListName, labelListId, labelsContentList);
     var products = getHtmlProducts(roomId, productsListName, productListId);
 
     $(`<div class="carousel-item active ${roomId}-item">
@@ -24,7 +26,7 @@ function addRoom(roomName, roomId, labelsListName, labelListId, productsListName
             </section>
         </div>`).appendTo('.carousel-inner');
 
-    $('<li data-target="#carouselRoom" class="active ${roomId}-indicator carousel-indicator" data-slide-to="'+$(".carousel-indicators").children().length+'"></li>').appendTo('.carousel-indicators')
+    $(`<li data-target="#carouselRoom" class="active ${roomId}-indicator carousel-indicator" data-slide-to="`+$(".carousel-indicators").children().length+'"></li>').appendTo('.carousel-indicators')
     $('.item').first().addClass('active');
     enableNamePathOnInput();
 
@@ -32,23 +34,26 @@ function addRoom(roomName, roomId, labelsListName, labelListId, productsListName
 }
 
 function addElementOnConsultButton(roomName, roomId){
-    $(`<a class="dropdown-item" onclick="goToItemOnCarousel('${roomId}')">${roomName}</a>`).appendTo('#consultButton');
+    $(`<a class="dropdown-item pointer" onclick="goToItemOnCarousel('${roomId}')">${roomName}</a>`).appendTo('#consultButton');
 }
 
 function goToItemOnCarousel(roomId){
     $(".carousel-item").removeClass('active');
     $(".carousel-indicator").removeClass('active');
-    $(`.${roomId}-item`).addClass('active');
     $(`.${roomId}-indicator`).addClass('active');
+    $(`.${roomId}-item`).addClass('active');
+
 }
 
-function getHtmlLabels(roomId, labelsName, labelsId){
+function getHtmlLabels(roomId, labelsName, labelsId, labelsContentList=undefined){
     var labelsHtml = '';
 
     for(var item in labelsName) {
+
         labelsHtml += `<div class="label-item">
                         <label>${labelsName[item]}</label>
-                        <input name="label-${roomId}-${labelsId[item]}" type="text" class="form-control">
+                        <input name="label-${roomId}-${labelsId[item]}" type="text" class="form-control"
+                            value="${labelsContentList?.[item]}">
                       </div>`
     }
     return labelsHtml;

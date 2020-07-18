@@ -68,3 +68,7 @@ body{
 .flex-wrap {
 	flex-wrap: wrap;
 }
+
+.pointer{
+    cursor: pointer;
+}

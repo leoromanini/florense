@@ -10,7 +10,7 @@ urlpatterns = [
     path('ambiente', views.environment, name='environment'),
     path('pedidos', views.orders_list, name='orders_list'),
     path('pedido', views.order, name='order'),
-    path('pedido-existente', views.order_existent, name='order'),
+    path('pedido/<int:pk>', views.order, name='order-edit'),
     path('clientes', views.customers, name='customers'),
 
     path('set_environment', views.set_environment, name='set_environment')

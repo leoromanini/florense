@@ -8,33 +8,50 @@
 
 {% block content %}
 
+{% if order %}
+{% define order.customer as order_customer %}
+{% define order.number as order_number %}
+{% define order.description as order_description %}
+{% define order.salesmen as order_salesman %}
+{% define order.inspector as order_inspector %}
+{% else %}
+{% endif %}
+
 <div class="container space-around flex">
+    {% if order %}
+    <h5 class="orders subtitle text-center">PEDIDO | Edição</h5>
+    <button form="order" class="btn btn-secondary btn-sm btn-salvar">CANCELAR</button>
+    {% else %}
     <h5 class="orders subtitle text-center">PEDIDO | Novo</h5>
+    {%endif%}
+
     <button form="order" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
 </div>
+
 <div class="container">
     <form id="order" action="/pedido" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="flex">
             <div class="form-group row-form">
                 <label for="customer">Cliente</label>
-                <input type="text" class="form-control" id="customer" name="customer">
+                <input type="text" class="form-control" id="customer" name="customer" value="{{order_customer}}">
             </div>
             <div class="form-group row-form">
                 <label for="number">Número</label>
-                <input type="text" class="form-control" id="number" name="number">
+                <input type="text" class="form-control" id="number" name="number" value="{{order_number}}">
             </div>
         </div>
         <div class="form-group">
             <label for="ambiente">Obervações Gerais</label>
-            <textarea form="order" class="form-control" id="ambiente" rows="3" name="description"></textarea>
+            <textarea form="order" class="form-control" id="ambiente" rows="3" name="description">{{customer}}</textarea>
         </div>
         <div class="form-group flex space-between">
             <div>
                 <label for="salesmen">Vendedor</label>
                 <select class="form-control" id="salesmen" name="salesmen">
+                    <option disabled selected>Selecione</option>
                     {% for item in salesmen %}
-                    <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}" {% if item == order_salesman %} selected {% endif %}>{{item.first_name}} {{item.last_name}}</option>
                     {% endfor %}
                 </select>
 
@@ -42,8 +59,9 @@
             <div>
                 <label for="inspector">Conferente</label>
                 <select class="form-control" id="inspector" name="inspector">
+                    <option disabled selected>Selecione</option>
                     {% for item in inspector %}
-                    <option value="{{item.id}}">{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}" {% if item == order_inspector %} selected {% endif %}>{{item.first_name}} {{item.last_name}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -59,7 +77,7 @@
 
                     {% for room in rooms %}
 
-                    <a class="dropdown-item" href="#" onclick="addRoom('{{room.name|upper}}',
+                    <a class="dropdown-item pointer" onclick="addRoom('{{room.name|upper}}',
                         {{room.id}},
                         {{room.labels.all|get_value_in_qs:'name'}},
                         {{room.labels.all|get_value_in_qs:'id'}},
@@ -78,9 +96,6 @@
                     Consultar
                 </button>
                 <div id="consultButton" class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
                 </div>
             </div>
 
@@ -106,8 +121,28 @@
 </div>
 
 
+
 {% endblock %}
 
 {% block script %}
 <script src="{% static 'portal/js/order.js' %}"></script>
+
+{% if order %}
+<script>
+{% for allocation in allocation_rooms %}
+
+addRoom('{{allocation.room.name|upper}}',
+        {{allocation.room.id}},
+        {{allocation.room.labels.all|get_value_in_qs:'name'}},
+        {{allocation.room.labels.all|get_value_in_qs:'id'}},
+        {{allocation.room.products.all|get_value_in_qs:'name'}},
+        {{allocation.room.products.all|get_value_in_qs:'id'}},
+        {{allocation.allocationlabel_set.all|get_value_in_qs:'content'}}
+        )
+{% endfor %}
+
+</script>
+{% endif %}
+
+
 {% endblock %}
