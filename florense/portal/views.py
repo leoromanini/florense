@@ -5,13 +5,15 @@ import json
 from .models import *
 from .decorators import environment_required
 from django.contrib.auth.models import User
+from django.utils.encoding import smart_str
 
 
 @login_required
 def set_environment(request):
-    body = json.loads(request.body)
-    request.session['environment'] = body['environment']
-    return JsonResponse({'href': '/pedidos'})
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        request.session['environment'] = body['environment']
+        return JsonResponse({'href': '/pedidos'})
 
 
 @login_required
@@ -94,6 +96,19 @@ def order(request, **kwargs):
                     allocation_product.save()
 
         return redirect('orders_list')
+
+
+def download_product_image(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        allocation_product = AllocationProduct.objects.get(pk=body['allocationId'])
+
+        if allocation_product:
+            filename = allocation_product.image.name.split('/')[-1]
+            response = HttpResponse(allocation_product.image, content_type='application/force-download')
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+            return response
 
 
 def order_existent(request):

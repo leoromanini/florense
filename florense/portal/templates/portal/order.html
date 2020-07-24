@@ -77,7 +77,7 @@
 
                     {% for room in rooms %}
 
-                    <a class="dropdown-item pointer" onclick="addRoom('{{room.name|upper}}',
+                    <a id="option-new-{{room.id}}" class="dropdown-item pointer" onclick="addRoom('{{room.name|upper}}',
                         {{room.id}},
                         {{room.labels.all|get_value_in_qs:'name'}},
                         {{room.labels.all|get_value_in_qs:'id'}},
@@ -120,24 +120,31 @@
     </form>
 </div>
 
-
-
 {% endblock %}
 
 {% block script %}
+<script>
+    {% if request.user|has_group:'inspector' %}
+        const profile = "inspector"
+    {% else %}
+        const profile = "salesman"
+    {% endif %}
+</script>
 <script src="{% static 'portal/js/order.js' %}"></script>
 
 {% if order %}
 <script>
 {% for allocation in allocation_rooms %}
-
 addRoom('{{allocation.room.name|upper}}',
         {{allocation.room.id}},
         {{allocation.room.labels.all|get_value_in_qs:'name'}},
         {{allocation.room.labels.all|get_value_in_qs:'id'}},
         {{allocation.room.products.all|get_value_in_qs:'name'}},
         {{allocation.room.products.all|get_value_in_qs:'id'}},
-        {{allocation.allocationlabel_set.all|get_value_in_qs:'content'}}
+        {{allocation.allocationlabel_set.all|get_value_in_qs:'content'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'id'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'product.id'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'active'|lower}}
         )
 {% endfor %}
 

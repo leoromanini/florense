@@ -24,7 +24,7 @@
         </thead>
         <tbody>
         {% for item in orders %}
-        <tr>
+        <tr class="pointer" onclick="window.location='/pedido/{{item.id}}'">
             <td>{{item.created | date:"SHORT_DATE_FORMAT"}}</td>
             <td>{{item.number}}</td>
             <td>{{item.customer}}</td>
