@@ -7,19 +7,16 @@ inspector = User.objects.get(pk=2)
 environment = Environment.objects.get(pk=1)
 
 o = Order()
-o.custumer = "Ricardo de Almeida"
-o.description = "Casa da praia no RJ"
+o.customer = "Leonardo Romanini"
+o.description = "Casa em Miami"
 o.salesmen = salesmen
 o.inspector = inspector
 o.environment = environment
 o.save()
-o.customer = "Ricardo de Almeida"
-o.save()
 
 r = Room()
 r.order = o
-r.save()
-r.name = "cozinha"
+r.name = "banheiro"
 r.save()
 
 p = Product()

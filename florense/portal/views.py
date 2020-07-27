@@ -48,22 +48,34 @@ def order(request, **kwargs):
             return render(request, 'portal/order.html', {'rooms': rooms, 'salesmen': salesmen, 'inspector': inspector})
 
     if request.method == 'POST':
-        customer = request.POST['customer']
-        description = request.POST['description']
-        number = request.POST['number']
+        id_order = request.POST.get('id_order')
+        customer = request.POST.get('customer')
+        description = request.POST.get('description')
+        number = request.POST.get('number')
 
         salesmen = User.objects.get(pk=request.POST['salesmen'])
         inspector = User.objects.get(pk=request.POST['inspector'])
         environment = Environment.objects.get(name=request.session.get('environment'))
 
-        order = Order(customer=customer, description=description,
-                      salesmen=salesmen, inspector=inspector,
-                      environment=environment, number=number)
+        if id_order:
+            Order.objects.filter(pk=id_order).update(customer=customer, description=description,
+                                                          salesmen=salesmen, inspector=inspector,
+                                                          environment=environment, number=number)
 
-        order.save()
+            order = Order.objects.get(pk=id_order)
+        else:
+            order = Order(customer=customer, description=description,
+                          salesmen=salesmen, inspector=inspector,
+                          environment=environment, number=number)
+            order.save()
 
         for value in request.POST.getlist('room'):
             room = Room.objects.get(pk=value)
+
+            # Ignore if this room already included
+            if id_order and room in order.rooms.all():
+                continue
+
             allocation = AllocationRoom(order=order, room=room)
             allocation.save()
 
@@ -75,10 +87,13 @@ def order(request, **kwargs):
                 label = Label.objects.get(pk=key_splited[-1])
                 permission = LabelPermission.objects.get(room=room, label=label)
                 if permission:
-                    allocation_label = AllocationLabel(label_permission=permission,
-                                                       allocation_room=allocation_room,
-                                                       content=value)
-                    allocation_label.save()
+                    if id_order:
+                        AllocationLabel.objects.filter(label_permission=permission,
+                                                       allocation_room=allocation_room).update(content=value)
+                    else:
+                        AllocationLabel(label_permission=permission,
+                                        allocation_room=allocation_room,
+                                        content=value).save()
 
         for key, value in request.FILES.items():
             if 'product' in key:
@@ -88,16 +103,21 @@ def order(request, **kwargs):
                 product = Product.objects.get(pk=key_splited[-1])
                 permission = ProductPermission.objects.get(room=room, product=product)
                 if permission:
-
-                    allocation_product = AllocationProduct(product_permission=permission,
-                                                           allocation_room=allocation_room,
-                                                           image=value)
-
-                    allocation_product.save()
+                    if id_order:
+                        allocation_product = AllocationProduct.objects.filter(product_permission=permission,
+                                                                              allocation_room=allocation_room).first()
+                        allocation_product.image = value
+                        allocation_product.save()
+                    else:
+                        AllocationProduct(product_permission=permission,
+                                          allocation_room=allocation_room,
+                                          image=value).save()
 
         return redirect('orders_list')
 
 
+@environment_required
+@login_required
 def download_product_image(request):
     if request.method == 'POST':
         body = json.loads(request.body)

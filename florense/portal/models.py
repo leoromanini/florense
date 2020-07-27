@@ -201,6 +201,7 @@ class AllocationProduct(models.Model):
     product_permission = models.ForeignKey(ProductPermission, on_delete=models.CASCADE)
     allocation_room = models.ForeignKey(AllocationRoom, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
+    approved = models.BooleanField(default=False)
 
     image = models.ImageField(blank=True, upload_to=get_product_images_path)
 

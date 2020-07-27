@@ -14,6 +14,7 @@
 {% define order.description as order_description %}
 {% define order.salesmen as order_salesman %}
 {% define order.inspector as order_inspector %}
+{% define order.id as order_id %}
 {% else %}
 {% endif %}
 
@@ -31,6 +32,7 @@
 <div class="container">
     <form id="order" action="/pedido" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="hidden" name="id_order" value="{{order_id}}">
         <div class="flex">
             <div class="form-group row-form">
                 <label for="customer">Cliente</label>
@@ -43,7 +45,8 @@
         </div>
         <div class="form-group">
             <label for="ambiente">Obervações Gerais</label>
-            <textarea form="order" class="form-control" id="ambiente" rows="3" name="description">{{customer}}</textarea>
+            <textarea form="order" class="form-control" id="ambiente" rows="3"
+                      name="description">{{order_description}}</textarea>
         </div>
         <div class="form-group flex space-between">
             <div>
@@ -51,7 +54,9 @@
                 <select class="form-control" id="salesmen" name="salesmen">
                     <option disabled selected>Selecione</option>
                     {% for item in salesmen %}
-                    <option value="{{item.id}}" {% if item == order_salesman %} selected {% endif %}>{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}" {% if item == order_salesman %} selected {% endif %}>{{item.first_name}}
+                        {{item.last_name}}
+                    </option>
                     {% endfor %}
                 </select>
 
@@ -61,7 +66,9 @@
                 <select class="form-control" id="inspector" name="inspector">
                     <option disabled selected>Selecione</option>
                     {% for item in inspector %}
-                    <option value="{{item.id}}" {% if item == order_inspector %} selected {% endif %}>{{item.first_name}} {{item.last_name}}</option>
+                    <option value="{{item.id}}" {% if item == order_inspector %} selected {% endif %}>{{item.first_name}}
+                        {{item.last_name}}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
@@ -119,6 +126,26 @@
         </div>
     </form>
 </div>
+<!-- Modal Product -->
+<div class="modal fade" id="productAllocationModal" tabindex="-1" role="dialog" aria-labelledby="productAllocationModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleProductAllocationModal"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="textProductAllocationModal" class="modal-body">
+                Favor confirmar para efetuar a aprovação do item.
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="confirmProductAllocationModal" class="btn btn-secondary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
@@ -129,6 +156,7 @@
     {% else %}
         const profile = "salesman"
     {% endif %}
+
 </script>
 <script src="{% static 'portal/js/order.js' %}"></script>
 
@@ -147,6 +175,7 @@ addRoom('{{allocation.room.name|upper}}',
         {{allocation.allocationproduct_set.all|get_value_in_qs:'active'|lower}}
         )
 {% endfor %}
+
 
 </script>
 {% endif %}
