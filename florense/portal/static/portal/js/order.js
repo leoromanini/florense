@@ -94,7 +94,23 @@ function getHtmlProducts(roomId, productsName, productsId, productAllocationIdLi
 
 function handlerAllocationProductModal(productName, allocationId){
     $('#titleProductAllocationModal').html(productName);
-    $('#confirmProductAllocationModal').click = "approveAllocationProduct(${allocationId})";
+    $('#confirmProductAllocationModal').on('click',
+        async function (){
+        const data = {
+            'allocationId': allocationId,
+            }
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify(data)
+            };
+        const response = await fetch('/approve_allocation_product', options);
+        const json = await response.json();
+    });
+
     $('#productAllocationModal').modal('show');
 }
 

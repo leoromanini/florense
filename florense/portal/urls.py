@@ -11,8 +11,8 @@ urlpatterns = [
     path('pedidos', views.orders_list, name='orders_list'),
     path('pedido', views.order, name='order'),
     path('pedido/<int:pk>', views.order, name='order-edit'),
-    path('clientes', views.customers, name='customers'),
     path('download-product-image', views.download_product_image, name='download-image'),
 
-    path('set_environment', views.set_environment, name='set_environment')
+    path('set_environment', views.set_environment, name='set_environment'),
+    path('approve_allocation_product', views.approve_allocation_product, name='approve_allocation_product')
 ]

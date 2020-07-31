@@ -5,7 +5,9 @@ import json
 from .models import *
 from .decorators import environment_required
 from django.contrib.auth.models import User
-from django.utils.encoding import smart_str
+from django.core.mail import get_connection, EmailMultiAlternatives
+from florense.settings import EMAIL_HOST_USER
+from django.template.loader import render_to_string
 
 
 @login_required
@@ -131,9 +133,50 @@ def download_product_image(request):
             return response
 
 
-def order_existent(request):
-    return render(request, 'portal/order_existent.html')
+def send_mass_html_mail(datatuple, fail_silently=False, user=None, password=None,
+                        connection=None):
+    """
+    Given a datatuple of (subject, text_content, html_content, from_email,
+    recipient_list), sends each message to each recipient list. Returns the
+    number of emails sent.
+
+    If from_email is None, the DEFAULT_FROM_EMAIL setting is used.
+    If auth_user and auth_password are set, they're used to log in.
+    If auth_user is None, the EMAIL_HOST_USER setting is used.
+    If auth_password is None, the EMAIL_HOST_PASSWORD setting is used.
+
+    """
+    connection = connection or get_connection(
+        username=user, password=password, fail_silently=fail_silently)
+    messages = []
+    subject, text, html, from_email, recipient = datatuple
+    message = EmailMultiAlternatives(subject, text, from_email, recipient)
+    message.attach_alternative(html, 'text/html')
+    messages.append(message)
+    return connection.send_messages(messages)
 
 
-def customers(request):
-    return render(request, 'portal/customers_list.html')
+@environment_required
+@login_required
+def approve_allocation_product(request):
+    body = json.loads(request.body)
+    allocation_product = AllocationProduct.objects.get(pk=body.get('allocationId'))
+    if allocation_product and (request.user.groups.filter(name__in=['conferentes', 'gerentes']).exists()
+                               or request.user.is_superuser):
+        allocation_product.approved = True
+        allocation_product.save()
+
+        emails_list = []
+        subscribers = User.objects.filter(groups__name__in=['gerentes', 'newsletter'])
+
+        emails_list.append(allocation_product.allocation_room.order.salesmen.email)
+        emails_list.append(allocation_product.allocation_room.order.inspector.email)
+
+        for item in subscribers:
+            emails_list.append(item.email)
+
+        emails_list = set(emails_list)
+        html_message = render_to_string('portal/email.html', {'context': 'values'})
+        email_tuple = ('Notificação - Pedido', '', html_message, EMAIL_HOST_USER, emails_list)
+        send_mass_html_mail(email_tuple, fail_silently=False)
+        return JsonResponse({'status': 'OK'})
