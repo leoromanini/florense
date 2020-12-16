@@ -1,0 +1,23 @@
+.environment{
+    font-size: 22px;
+    margin-top: 12%;
+}
+
+.btn-environment{
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+.link-environment{
+    padding-right: 7%;
+    padding-left: 7%;
+}
+
+.link{
+   color:black;
+   text-decoration: none;
+   background-color: none;
+}
+.link:hover{text-decoration:none;
+color:black;}
+

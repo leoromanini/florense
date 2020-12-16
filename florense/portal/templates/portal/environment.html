@@ -1,0 +1,21 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'portal/css/environment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container space-start flex">
+    <h5 class="orders subtitle text-center">AMBIENTE | Entrar</h5>
+</div>
+<div class="container space-between flex environment">
+    <a class="link" href="#" onclick="setEnvironment('Brasília')">Brasília</a>
+    <a class="link" href="#" onclick="setEnvironment('Campinas')">Campinas</a>
+    <a class="link" href="#" onclick="setEnvironment('Ribeirão Preto')">Ribeirão Preto</a>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'portal/js/environment.js' %}"></script>
+{% endblock %}

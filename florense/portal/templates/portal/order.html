@@ -1,0 +1,184 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'portal/css/order.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if order %}
+{% define order.customer as order_customer %}
+{% define order.number as order_number %}
+{% define order.description as order_description %}
+{% define order.salesmen as order_salesman %}
+{% define order.inspector as order_inspector %}
+{% define order.id as order_id %}
+{% else %}
+{% endif %}
+
+<div class="container space-around flex">
+    {% if order %}
+    <h5 class="orders subtitle text-center">PEDIDO | Edição</h5>
+    <button form="order" class="btn btn-secondary btn-sm btn-salvar">CANCELAR</button>
+    {% else %}
+    <h5 class="orders subtitle text-center">PEDIDO | Novo</h5>
+    {%endif%}
+
+    <button form="order" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
+</div>
+
+<div class="container">
+    <form id="order" action="/pedido" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="id_order" value="{{order_id}}">
+        <div class="flex">
+            <div class="form-group row-form">
+                <label for="customer">Cliente</label>
+                <input type="text" class="form-control" id="customer" name="customer" value="{{order_customer}}">
+            </div>
+            <div class="form-group row-form">
+                <label for="number">Número</label>
+                <input type="text" class="form-control" id="number" name="number" value="{{order_number}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ambiente">Obervações Gerais</label>
+            <textarea form="order" class="form-control" id="ambiente" rows="3"
+                      name="description">{{order_description}}</textarea>
+        </div>
+        <div class="form-group flex space-between">
+            <div>
+                <label for="salesmen">Vendedor</label>
+                <select class="form-control" id="salesmen" name="salesmen">
+                    <option disabled selected>Selecione</option>
+                    {% for item in salesmen %}
+                    <option value="{{item.id}}" {% if item == order_salesman %} selected {% endif %}>{{item.first_name}}
+                        {{item.last_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+
+            </div>
+            <div>
+                <label for="inspector">Conferente</label>
+                <select class="form-control" id="inspector" name="inspector">
+                    <option disabled selected>Selecione</option>
+                    {% for item in inspector %}
+                    <option value="{{item.id}}" {% if item == order_inspector %} selected {% endif %}>{{item.first_name}}
+                        {{item.last_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="container space-around flex">
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    Adicionar
+                </button>
+                <div class="dropdown-menu">
+
+                    {% for room in rooms %}
+
+                    <a id="option-new-{{room.id}}" class="dropdown-item pointer" onclick="addRoom('{{room.name|upper}}',
+                        {{room.id}},
+                        {{room.labels.all|get_value_in_qs:'name'}},
+                        {{room.labels.all|get_value_in_qs:'id'}},
+                        {{room.products.all|get_value_in_qs:'name'}},
+                        {{room.products.all|get_value_in_qs:'id'}})">{{room.name | upper}}</a>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    Consultar
+                </button>
+                <div id="consultButton" class="dropdown-menu">
+                </div>
+            </div>
+
+        </div>
+
+        <div id="carouselRoom" class="carousel slide" data-interval="false">
+            <div class="carousel-inner">
+
+            </div>
+            <a class="carousel-control-prev" href="#carouselRoom" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselRoom" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            <ol class="carousel-indicators">
+
+            </ol>
+        </div>
+    </form>
+</div>
+<!-- Modal Product -->
+<div class="modal fade" id="productAllocationModal" tabindex="-1" role="dialog" aria-labelledby="productAllocationModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleProductAllocationModal"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="textProductAllocationModal" class="modal-body">
+                Favor confirmar para efetuar a aprovação do item.
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="confirmProductAllocationModal" class="btn btn-secondary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    {% if request.user|has_group:'inspector' %}
+        const profile = "inspector"
+    {% else %}
+        const profile = "salesman"
+    {% endif %}
+
+</script>
+<script src="{% static 'portal/js/order.js' %}"></script>
+
+{% if order %}
+<script>
+{% for allocation in allocation_rooms %}
+addRoom('{{allocation.room.name|upper}}',
+        {{allocation.room.id}},
+        {{allocation.room.labels.all|get_value_in_qs:'name'}},
+        {{allocation.room.labels.all|get_value_in_qs:'id'}},
+        {{allocation.room.products.all|get_value_in_qs:'name'}},
+        {{allocation.room.products.all|get_value_in_qs:'id'}},
+        {{allocation.allocationlabel_set.all|get_value_in_qs:'content'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'id'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'product.id'}},
+        {{allocation.allocationproduct_set.all|get_value_in_qs:'active'|lower}}
+        )
+{% endfor %}
+
+
+</script>
+{% endif %}
+
+
+{% endblock %}

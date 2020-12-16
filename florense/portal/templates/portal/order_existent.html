@@ -1,0 +1,107 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'portal/css/order.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container space-around flex">
+    <h5 class="orders subtitle text-center">PEDIDO | Edição</h5>
+    <button type="button" class="btn btn-secondary btn-sm btn-salvar">SALVAR</button>
+    <button type="button" class="btn btn-secondary btn-sm btn-salvar">APROVAR</button>
+    <button type="button" class="btn btn-secondary btn-sm btn-salvar">EXCLUIR</button>
+</div>
+<div class="container">
+    <form>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Cliente</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+                <option disabled selected>Selecione</option>
+                <option>Leonardo Romanini</option>
+                <option>Denison Caramori</option>
+                <option>Leonardo Romanini</option>
+                <option>Denison Caramori</option>
+                <option>Leonardo Romanini</option>
+                <option>Denison Caramori</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ambiente">Ambiente</label>
+            <textarea class="form-control" id="ambiente" rows="3"></textarea>
+        </div>
+        <section class="container flex row space-between">
+            <div class="item">
+                <p>Fogão - <a class="pointer" data-toggle="modal"
+                              data-target="#ExemploModalCentralizado">Visualizar existente</a>
+                </p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+            <div class="item">
+                <p>Coifa</p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+            <div class="item">
+                <p>Microondas</p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+        </section>
+        <section class="container flex row space-between">
+            <div class="item">
+                <p>Geladeira</p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+            <div class="item">
+                <p>Forno</p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+            <div class="item">
+                <p>Batedeira</p>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="ExemploModalCentralizado" tabindex="-1" role="dialog"
+     aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalCentralizado">Leonardo Romanini | Fogão</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'portal/images/fogao.png'%}" class="img img-thumbnail">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'portal/js/order.js' %}"></script>
+{% endblock %}
