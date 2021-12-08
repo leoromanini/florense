@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  db:
+    image: mysql/mysql-server:latest
+    environment:
+      MYSQL_DATABASE: "florense"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "admin"
+      MYSQL_ROOT_PASSWORD: 'admin'
+
+  migration:
+    build: .
+    image: app
+    command: python florense/manage.py migrate
+    environment:
+      MYSQL_NAME: "florense"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "admin"
+    volumes:
+      - .:/code
+    links:
+      - db:db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: app
+    command: python florense/manage.py runserver 0.0.0.0:8000
+    volumes:
+    - .:/code
+    environment:
+      MYSQL_NAME: "florense"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "admin"
+    ports:
+    - "8000:8000"
+    links:
+      - db:db
+    depends_on:
+      - migration
+      - db

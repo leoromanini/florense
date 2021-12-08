@@ -6,7 +6,7 @@ from .models import *
 from .decorators import environment_required
 from django.contrib.auth.models import User
 from django.core.mail import get_connection, EmailMultiAlternatives
-from florense.settings import EMAIL_HOST_USER
+# from florense.settings import EMAIL_HOST_USER
 from django.template.loader import render_to_string
 
 

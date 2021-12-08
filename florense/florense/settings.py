@@ -14,7 +14,7 @@ import os
 
 import django
 from django.db import connection
-from florense import email_auth
+# from florense import email_auth
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,14 +80,13 @@ WSGI_APPLICATION = 'florense.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'florense',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'NAME': os.environ.get('MYSQL_NAME'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -135,15 +134,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = email_auth.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = email_auth.EMAIL_HOST_PASSWORD
+# EMAIL_HOST_USER = email_auth.EMAIL_HOST_USER
+# EMAIL_HOST_PASSWORD = email_auth.EMAIL_HOST_PASSWORD
 
 # Loads all the environments avaliable on the database
-APP_ENVIRONMENTS = []
-cursor = connection.cursor()
-try:
-    cursor.execute('''SELECT name FROM tbl_environment''')
-    for environment in cursor.fetchall():
-        APP_ENVIRONMENTS.append(environment[0])
-except django.db.utils.ProgrammingError:
-    print("WARNING: tbl_environment is missing!")
+# APP_ENVIRONMENTS = []
+# cursor = connection.cursor()
+# try:
+#     cursor.execute('''SELECT name FROM tbl_environment''')
+#     for environment in cursor.fetchall():
+#         APP_ENVIRONMENTS.append(environment[0])
+# except django.db.utils.ProgrammingError:
+#     print("WARNING: tbl_environment is missing!")
