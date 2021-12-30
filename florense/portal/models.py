@@ -5,18 +5,19 @@ from django.utils import timezone
 
 
 class Environment(models.Model):
-    class Meta:
-        db_table = "tbl_environment"
-
     name = models.CharField(max_length=150)
     active = models.BooleanField(default=True)
+
+    def set_environment_into_session(self, request):
+        request.session['environment'] = self.name
+        return request
 
     def __str__(self):
         return self.name
 
 
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     environment = models.ForeignKey(Environment, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -24,9 +25,6 @@ class Employee(models.Model):
 
 
 class Label(models.Model):
-    class Meta:
-        db_table = "tbl_label"
-
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=150)
     active = models.BooleanField(default=True)
@@ -45,9 +43,6 @@ class Label(models.Model):
 
 
 class Product(models.Model):
-    class Meta:
-        db_table = "tbl_product"
-
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
 
@@ -67,9 +62,6 @@ class Product(models.Model):
 
 
 class Room(models.Model):
-    class Meta:
-        db_table = "tbl_room"
-
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     products = models.ManyToManyField(Product, through='ProductPermission')
@@ -90,9 +82,6 @@ class Room(models.Model):
 
 
 class Order(models.Model):
-    class Meta:
-        db_table = "tbl_order"
-
     id = models.AutoField(primary_key=True)
     number = models.CharField(max_length=100)
     customer = models.CharField(max_length=250)
@@ -119,9 +108,6 @@ class Order(models.Model):
 
 
 class ProductPermission(models.Model):
-    class Meta:
-        db_table = "tbl_product_permission"
-
     id = models.AutoField(primary_key=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -141,9 +127,6 @@ class ProductPermission(models.Model):
 
 
 class LabelPermission(models.Model):
-    class Meta:
-        db_table = "tbl_label_permission"
-
     id = models.AutoField(primary_key=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     label = models.ForeignKey(Label, on_delete=models.CASCADE)
@@ -163,9 +146,6 @@ class LabelPermission(models.Model):
 
 
 class AllocationRoom(models.Model):
-    class Meta:
-        db_table = "tbl_allocation_room"
-
     id = models.AutoField(primary_key=True)
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -194,9 +174,6 @@ def get_product_images_path(instance, filename):
 
 
 class AllocationProduct(models.Model):
-    class Meta:
-        db_table = "tbl_allocation_product"
-
     id = models.AutoField(primary_key=True)
     product_permission = models.ForeignKey(ProductPermission, on_delete=models.CASCADE)
     allocation_room = models.ForeignKey(AllocationRoom, on_delete=models.CASCADE)
@@ -219,9 +196,6 @@ class AllocationProduct(models.Model):
 
 
 class AllocationLabel(models.Model):
-    class Meta:
-        db_table = "tbl_allocation_label"
-
     id = models.AutoField(primary_key=True)
     label_permission = models.ForeignKey(LabelPermission, on_delete=models.CASCADE)
     allocation_room = models.ForeignKey(AllocationRoom, on_delete=models.CASCADE)

@@ -2,25 +2,27 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 import json
-from .models import *
+from .models import Order, AllocationProduct, Room, AllocationRoom, Environment, Label, LabelPermission, \
+    AllocationLabel, ProductPermission, Product
 from .decorators import environment_required
 from django.contrib.auth.models import User
 from django.core.mail import get_connection, EmailMultiAlternatives
-# from florense.settings import EMAIL_HOST_USER
+from florense.settings import EMAIL_HOST_USER
 from django.template.loader import render_to_string
 
 
 @login_required
 def set_environment(request):
     if request.method == 'POST':
-        body = json.loads(request.body)
-        request.session['environment'] = body['environment']
-        return JsonResponse({'href': '/pedidos'})
+        environment = Environment(name=request.POST.get('environment'))
+        environment.set_environment_into_session(request)
+        return render(request, 'portal/orders_list.html')
 
 
 @login_required
-def environment(request):
-    return render(request, 'portal/environment.html')
+def list_environment(request):
+    environments = Environment.objects.all()
+    return render(request, 'portal/environment.html', {'environments': environments})
 
 
 @environment_required
